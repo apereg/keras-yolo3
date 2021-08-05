@@ -143,7 +143,7 @@ class YOLO(object):
             right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
             return left, top, right, bottom
 
-        return -1
+        return -1, -1, -1, -1
 
 
     def close_session(self):

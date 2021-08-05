@@ -10,45 +10,47 @@ def detect_img(yolo):
 
     # BIWI part
     biwi_path = datasets_folder_path + 'BIWI/'
-
-    biwi_annotations = open(biwi_path + 'BIWI_annotations.txt', 'r', encoding='utf8')
-    annotations = biwi_annotations.read().split('\n')
-    biwi_annotations.close()
-
-    print('Buscando los rostros en las', len(annotations), 'imagenes de BIWI')
-    """
-    biwi_bboxes = ''
-    for line in annotations:
-        image_path = biwi_path + line.split(' ')[0]
-        a, b, c, d = yolo.detect_image(Image.open(image_path))
-        if a == -1:
-            continue
-        biwi_bboxes += image_path + ',' + str(a) + ' ' + str(b) + ' ' + str(c) + ' ' + str(d) + '\n'
-
-    print('Guardando en ', biwi_path + 'BIWI_bboxes.txt')
-    biwi_file = open(biwi_path + 'BIWI_bboxes.txt', "w")
-    biwi_file.write(biwi_bboxes)
-    biwi_file.close()
-    """
-
-    # AFLW2000 part
-    aflw_path = datasets_folder_path + 'AFLW2000/'
-    print('Buscando rostros en las imagenes de AFLW2000')
-
-    aflw_bboxes = ''
-    for file in os.listdir(aflw_path):
-        if file.endswith('jpg'):
-            image_path = aflw_path + file
-            print(image_path)
+    biwi_bboxes_path = biwi_path + 'BIWI_bboxes.txt'
+    if not os.path.exists(biwi_bboxes_path):
+        biwi_annotations = open(biwi_path + 'BIWI_annotations.txt', 'r', encoding='utf8')
+        annotations = biwi_annotations.read().split('\n')
+        biwi_annotations.close()
+        print('Buscando los rostros en las', len(annotations), 'imagenes de BIWI')
+        biwi_bboxes = ''
+        for line in annotations:
+            image_path = biwi_path + line.split(' ')[0]
             a, b, c, d = yolo.detect_image(Image.open(image_path))
             if a == -1:
                 continue
-            aflw_bboxes += image_path + ',' + str(a) + ' ' + str(b) + ' ' + str(c) + ' ' + str(d) + '\n'
+            biwi_bboxes += image_path + ',' + str(a) + ' ' + str(b) + ' ' + str(c) + ' ' + str(d) + '\n'
 
-    print('Guardando en ', aflw_path + 'AFLW2000_bboxes.txt')
-    aflw_file = open(aflw_path + 'AFLW2000_bboxes.txt', "w")
-    aflw_file.write(aflw_path)
-    aflw_file.close()
+        print('Guardando en ', biwi_bboxes_path)
+        biwi_file = open(biwi_bboxes_path + 'BIWI_bboxes.txt', "w")
+        biwi_file.write(biwi_bboxes)
+        biwi_file.close()
+    else:
+        print('El fichero de anotaciones de BIWI ya existe, si quieres generar uno nuevo elimina', biwi_bboxes_path)
+
+    # AFLW2000 part
+    aflw_path = datasets_folder_path + 'AFLW2000/'
+    aflw_bboxes_path = aflw_path + 'AFLW2000_bboxes.txt'
+    if not os.path.exists(aflw_bboxes_path):
+        print('Buscando rostros en las imagenes de AFLW2000')
+        aflw_bboxes = ''
+        for file in os.listdir(aflw_path):
+            if file.endswith('jpg'):
+                image_path = aflw_path + file
+                a, b, c, d = yolo.detect_image(Image.open(image_path))
+                if a == -1:
+                    continue
+                aflw_bboxes += image_path + ',' + str(a) + ' ' + str(b) + ' ' + str(c) + ' ' + str(d) + '\n'
+
+        print('Guardando en ', aflw_path + 'AFLW2000_bboxes.txt')
+        aflw_file = open(aflw_path + 'AFLW2000_bboxes.txt', "w")
+        aflw_file.write(aflw_bboxes)
+        aflw_file.close()
+    else:
+        print('El fichero de anotaciones de AFLW2000 ya existe, si quieres generar uno nuevo elimina', aflw_bboxes_path)
 
     yolo.close_session()
 
